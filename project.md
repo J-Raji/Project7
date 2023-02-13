@@ -9,27 +9,27 @@
 
 -Set ec2-user as user
 
-![ec2-user]((./Images/user.png)
+![ec2-user](./Images/user.png)
 
 ## Launch an EC2 Instance-Webserver
 
 1. Prepare a Web Server
 -Create 3 volumes in the same AZ(each of 10GiB)
 
-![EBS Volume 1 added]((./Images/xvdf.png)
+![EBS Volume 1 added](./Images/xvdf.png)
 
-![EBS Volume 2 added]((./Images/xvdf.png)
+![EBS Volume 2 added](./Images/xvdf.png)
 
-![EBS Volume 3 added]((./Images/xvdf.png)
+![EBS Volume 3 added](./Images/xvdf.png)
 
 3.Confirm
 `lsblk`
 
-![EBS Volume  confirmed]((./Images/stat.png)
+![EBS Volume  confirmed](./Images/stat.png)
 
 4.`df -h`
 5. 
-![all available mount]((./Images/mt.png)
+![all available mount](./Images/mt.png)
 
 5.`sudo gdisk /dev/xvdf`
 `sudo gdisk /dev/xvdg`
@@ -41,43 +41,43 @@
 
 `lsblk`
 
-![xvdf1,xvdg1,xvdh1 created]((./Images/lsblk.png)
+![xvdf1,xvdg1,xvdh1 created](./Images/lsblk.png)
 
 6.Install lvm2
 `sudo yum install lvm2`
 
-![lvm2 installed]((./Images/lvm2.png)
+![lvm2 installed](./Images/lvm2.png)
 
 `sudo lvmdiskscan`
 
-![available partitions]((./Images/lvmdiskscan.png)
+![available partitions](./Images/lvmdiskscan.png)
 
 7.to mark as physical volumes
 `sudo pvcreate /dev/xvdf1`
 `sudo pvcreate /dev/xvdg1`
 `sudo pvcreate /dev/xvdh1`
 
-![physical volumnes xvdf1,xvdg1,xvdh1 created]((./Images/pvcreate.png)
+![physical volumnes xvdf1,xvdg1,xvdh1 created](./Images/pvcreate.png)
 
 8.Verify
 `sudo pvs`
 
-![pv confirmed]((./Images/pvs.png)
+![pv confirmed](./Images/pvs.png)
 
 9.Add all 3 volumes to volume group VG nfsdata-vg
 `sudo vgcreate nfsdata-vg /dev/xvdh1 /dev/xvdg1 /dev/xvdf1`
 
-![vgcreate done]((./Images/vgcreate.png)
+![vgcreate done](./Images/vgcreate.png)
 
 10.Verify
 `sudo vgs`
 
-![vgs confirmed]((./Images/vgs.png)
+![vgs confirmed](./Images/vgs.png)
 
 11.lvcreate utility to create 3 logical volumes(lv-opt,lv-apps,lv-logs)
 `sudo lvcreate -n lv-opt -L 11G nfsdata-vg`
 
-![lv-opt confirmed]((./Images/lv-opt.png)
+![lv-opt confirmed](./Images/lv-opt.png)
 
 `sudo lvcreate -n lv-apps -L 11G nfsdata-vg`
 
@@ -85,43 +85,43 @@
 
 `sudo lvcreate -n lv-logs -L 5G nfsdata-vg`
 
-![lv-logs confirmed]((./Images/lv-logs.png)
+![lv-logs confirmed](./Images/lv-logs.png)
 
 12.Confirm Logical volumes
 `sudo lvs`
 
-![lvs confirmed]((./Images/lvs.png)
+![lvs confirmed](./Images/lvs.png)
 
 13.Verify entire setup
 `sudo vgdisplay -v #view complete setup - VG, PV, and LV`
 
-![Vg and Lv details]((./Images/Vg-Lv.png)
+![Vg and Lv details](./Images/Vg-Lv.png)
 
-![pv details]((./Images/pv.png)
+![pv details](./Images/pv.png)
 
-![pv details]((./Images/pv1.png)
+![pv details](./Images/pv1.png)
 
 `sudo lsblk`
 
-![lsblk details with no mount points]((./Images/sudo-lsblk.png)
+![lsblk details with no mount points](./Images/sudo-lsblk.png)
 
 14.Format the LV with xfs filesystem
 `sudo mkfs -t xfs /dev/nfsdata-vg/lv-opt`
 
-![lv-opt formatted]((./Images/mkfs-lv-opt.png)
+![lv-opt formatted](./Images/mkfs-lv-opt.png)
 
 `sudo mkfs -t xfs /dev/nfsdata-vg/lv-app`
 
-![lv-apps formatted]((./Images/mkfs-lv-app.png)
+![lv-apps formatted](./Images/mkfs-lv-app.png)
 
 `sudo mkfs -t xfs /dev/nfsdata-vg/lv-logs`
 
-![lv-logs formatted]((./Images/mkfs-lv-logs.png)
+![lv-logs formatted](./Images/mkfs-lv-logs.png)
 
 **Rename vg nfsdata-vg to webdata-vg**
 `sudo vgrename nfsdata-vg webdata-vg`
 
-![webdata-vg confirmed]((./Images/webdata-vg.png)
+![webdata-vg confirmed](./Images/webdata-vg.png)
 
 `sudo mkdir /mnt && cd /mnt`
 -[]Create /mnt/apps to be used by webservers
@@ -145,23 +145,23 @@ Mount lv-opt on /mnt/opt – To be used by Jenkins server in Project 8
 
 `sudo yum -y update`
 
-![nfs installed]((./Images/nfs-install.png)
+![nfs installed](./Images/nfs-install.png)
 
 `sudo yum install nfs-utils -y`
 
-![nfs utils]((./Images/nfs-util.png)
+![nfs utils](./Images/nfs-util.png)
 
 `sudo systemctl start nfs-server.service`
 `sudo systemctl enable nfs-server.service`
 
-![nfs server enabled]((./Images/nfs-server.png)
+![nfs server enabled](./Images/nfs-server.png)
 `sudo systemctl status nfs-server.service`
 
-![nfs stat]((./Images/nfs-stat.png)
+![nfs stat](./Images/nfs-stat.png)
 
 5. Confirm Subnet link to cidr
 
-![confirm subnet-0cc56067f9c6ce698  link on cidr 172.31.32.0/20]((./Images/subnet-cidr.png)
+![confirm subnet-0cc56067f9c6ce698  link on cidr 172.31.32.0/20](./Images/subnet-cidr.png)
 
 - Make sure we set up permission that will allow our Web servers to read, write and execute files on NFS:
 
@@ -179,7 +179,7 @@ Mount lv-opt on /mnt/opt – To be used by Jenkins server in Project 8
 `sudo rsync /mnt/logs`
 `sudo rsync /mnt/apps`
 `sudo rsync /mnt/opt`
-![rsync done](rsync.png)
+![rsync done](./Images/rsync.png)
 
 - Configure access to NFS for clients within the same subnet (example of Subnet CIDR – 172.31.32.0/20 ):
 
@@ -193,7 +193,7 @@ Esc + :wq!
 
 `sudo exportfs -arv`
 
-![exports]((./Images/exports.png)
+![exports](./Images/exports.png)
 
 6.Check which port is used by NFS and open it using Security Groups (add new Inbound Rule)
 `rpcinfo -p | grep nfs`
@@ -201,7 +201,7 @@ Esc + :wq!
 ![nfs checking]((./Images/nfs-check.png)
 
 -Configuring inbound rules for port TCP 111,UDP 111,UDP 2029,NFS 2049
-![inbound rules]((./Images/inbound.png)
+![inbound rules](./Images/inbound.png)
 
 ## Step 2 — Configure the database server
 
@@ -209,12 +209,12 @@ Esc + :wq!
 - Install Mysql server
 `sudo yum install mysql-server`
 
-![mysql installed]((./Images/mysql.png)
+![mysql installed](./Images/mysql.png)
 
 `sudo systemctl restart mysqld`
 `sudo systemctl enable mysqld`
 
-![mysql enabled]((./Images/enable-mysql.png)
+![mysql enabled](./Images/enable-mysql.png)
 
 - Create a database and name it tooling
 `sudo mysql`
@@ -223,7 +223,7 @@ Esc + :wq!
 
 >CREATE DATABASE tooling;
 
-![tooling created]((./Images/db.png)
+![tooling created](./Images/db.png)
 
 >CREATE USER `webaccess`@`172.31.38.44` IDENTIFIED BY 'mypass';
 
@@ -232,15 +232,15 @@ Esc + :wq!
 - Grant permission to webaccess user on tooling database to do anything only from the webservers subnet cidr
 >GRANT ALL ON tooling.* TO 'webaccess'@'172.31.32.0/20';
 
-![myuser granted]((./Images/grant.png)
+![myuser granted](./Images/grant.png)
 
 >FLUSH PRIVILEGES;
 
-![flushed]((./Images/flush.png)
+![flushed](./Images/flush.png)
 
 >SHOW DATABASES;
 
-![databases]((./Images/show.png)
+![databases](./Images/show.png)
 exit
 
 ## Mount /var/www on lv-app
@@ -252,13 +252,13 @@ exit
 
 1.Launch a new EC2 instance with RHEL 8 Operating System
 
-![nfs2]((./Images/nfs2.png)
+![nfs2](./Images/nfs2.png)
 
 2.Install NFS client
 
 `sudo yum install nfs-utils nfs4-acl-tools -y`
 
-![nfs util]((./Images/nfsclient.png)
+![nfs util](./Images/nfsclient.png)
 
 3.Mount /var/www/ and target the NFS server’s export for apps
 `sudo mkdir /var/www`
@@ -276,62 +276,62 @@ exit
 
 `sudo yum install httpd -y`
 
-![httpd]((./Images/httpd.png)
+![httpd](./Images/httpd.png)
 
 `sudo dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm`
 
-![remi repository]((./Images/remi.png)
+![remi repository](./Images/remi.png)
 
 `sudo dnf install dnf-utils http://rpms.remirepo.net/enterprise/remi-release-8.rpm`
 
-![remi util]((./Images/remi2.png)
+![remi util](./Images/remi2.png)
 
 `sudo dnf module reset php`
 
-![module php]((./Images/mod.png)
+![module php](./Images/mod.png)
 
 `sudo dnf module enable php:remi-7.4`
 
-![php module enable]((./Images/mod-enable.png)
+![php module enable](./Images/mod-enable.png)
 
 `sudo dnf install php php-opcache php-gd php-curl php-mysqlnd`
 
-![php installed]((./Images/php-inst.png)
+![php installed](./Images/php-inst.png)
 
 `sudo systemctl start php-fpm`
 
 `sudo systemctl enable php-fpm`
 
-![php-fpm enabled]((./Images/php-fpm.png)
+![php-fpm enabled](./Images/php-fpm.png)
 
 `sudo setsebool -P httpd_execmem 1`
 
-![httpd setsebool]((./Images/set.png)
+![httpd setsebool](./Images/set.png)
 
 **Repeat steps 1-5 for another 2 Web Servers**
 
 Create an instance Webserver1 and Webserver2
 `ssh -i "Webs-key.pem" ec2-user@ec2-18-231-164-144.sa-east-1.compute.amazonaws.com`
 
-![Webserver1]((./Images/Web.png)
+![Webserver1](./Images/Web.png)
 
 `ssh -i "Webs2-key.pem" ec2-user@ec2-18-228-16-28.sa-east-1.compute.amazonaws.com`
 
-![Webserver2]((./Images/Web2.png)
+![Webserver2](./Images/Web2.png)
 
 Add Inbound rule for NFS Server
 
-![MYSQL and TCP ports 3306 and 80 set to see at NFS Server 172.31.38.44/32 ]((./Images/webs.png)
+![MYSQL and TCP ports 3306 and 80 set to see at NFS Server 172.31.38.44/32 ](./Images/webs.png)
 
-![MYSQL and TCP ports 3306 and 80 set to see at NFS Server 172.31.38.44/32 ]((./Images/webs.png)
+![MYSQL and TCP ports 3306 and 80 set to see at NFS Server 172.31.38.44/32 ](./Images/webs.png)
 
 Step 1 -5
 
 -[]Verify that Apache files and directories are available on the Web Server in /var/www and also on the NFS server in /mnt/apps. If you see the same files – it means NFS is mounted correctly. You can try to create a new file touch test.txt from one server and check if the same file is accessible from other Web Servers.
 
-![confirm /var/www on webserver2]((./Images/Webs-var.png)
+![confirm /var/www on webserver2](./Images/Webs-var.png)
 
-![confirm /var/www on webserver2]((./Images/Webs2-var.png)
+![confirm /var/www on webserver2](./Images/Webs2-var.png)
 
 -Create test.txt on Webserver2
 `cd /var/www` 
